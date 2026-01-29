@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Produit;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -11,7 +13,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $produits = Produit::with('categorie')->get();
+        return view('admin.produits.index', compact('produits'));
     }
 
     /**
@@ -19,7 +22,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        return view('admin.produits.create', compact('categories'));
     }
 
     /**
@@ -27,7 +31,26 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'categorie_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        $data = $request->except('image');
+        
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/produits'), $imageName);
+            $data['image'] = $imageName;
+        }
+
+        Produit::create($data);
+        return redirect('/produits')->with('success', 'Product created successfully.');
     }
 
     /**
@@ -35,7 +58,8 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $produit = Produit::with('categorie')->findOrFail($id);
+        return view('admin.produits.show', compact('produit'));
     }
 
     /**
@@ -43,7 +67,9 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $produit = Produit::findOrFail($id);
+        $categories = Category::all();
+        return view('admin.produits.edit', compact('produit', 'categories'));
     }
 
     /**
@@ -51,7 +77,31 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'categorie_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        $produit = Produit::findOrFail($id);
+        $data = $request->except('image');
+
+        if ($request->hasFile('image')) {
+            if ($produit->image && file_exists(public_path('images/produits/' . $produit->image))) {
+                unlink(public_path('images/produits/' . $produit->image));
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/produits'), $imageName);
+            $data['image'] = $imageName;
+        }
+
+        $produit->update($data);
+        return redirect('/produits')->with('success', 'Product updated successfully.');
     }
 
     /**
@@ -59,6 +109,13 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $produit = Produit::findOrFail($id);
+        
+        if ($produit->image && file_exists(public_path('images/produits/' . $produit->image))) {
+            unlink(public_path('images/produits/' . $produit->image));
+        }
+        
+        $produit->delete();
+        return redirect('/produits')->with('success', 'Product deleted successfully.');
     }
 }

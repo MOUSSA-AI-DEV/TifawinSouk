@@ -37,7 +37,7 @@ class CategoryController extends Controller
         $data['slug'] = \Illuminate\Support\Str::slug($request->name);
         
         \App\Models\Category::create($data);
-        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully.');
+        return redirect('/categories')->with('success', 'Category created successfully.');
     }
 
     /**
@@ -73,7 +73,7 @@ class CategoryController extends Controller
         $data['slug'] = \Illuminate\Support\Str::slug($request->name);
         
         $category->update($data);
-        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully.');
+        return redirect('/categories')->with('success', 'Category updated successfully.');
     }
 
     /**
@@ -83,6 +83,6 @@ class CategoryController extends Controller
     {
         $category = \App\Models\Category::findOrFail($id);
         $category->delete();
-        return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully.');
+        return redirect('/categories')->with('success', 'Category deleted successfully.');
     }
 }
