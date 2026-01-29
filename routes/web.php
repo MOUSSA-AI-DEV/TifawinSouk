@@ -10,7 +10,7 @@ Route::get('/', function () {
 });
 
 //Admin routes
-Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+Route::get('/admin/dashboard', [AdminController::class, 'index']);
 
 //Category routes
 Route::get('/categories', [CategoryController::class, 'index']);

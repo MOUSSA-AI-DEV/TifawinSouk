@@ -7,11 +7,16 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
     /**
+     * Display admin dashboard.
+     */
+   
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+    return view('admin/dashboard');
     }
 
     /**
