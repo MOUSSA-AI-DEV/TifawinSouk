@@ -11,7 +11,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = \App\Models\Category::all();
+        return view('admin.categories.index', compact('categories'));
     }
 
     /**
@@ -19,7 +20,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.categories.create');
     }
 
     /**
@@ -27,7 +28,16 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string'
+        ]);
+
+        $data = $request->all();
+        $data['slug'] = \Illuminate\Support\Str::slug($request->name);
+        
+        \App\Models\Category::create($data);
+        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully.');
     }
 
     /**
@@ -43,7 +53,8 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $category = \App\Models\Category::findOrFail($id);
+        return view('admin.categories.edit', compact('category'));
     }
 
     /**
@@ -51,7 +62,18 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $category = \App\Models\Category::findOrFail($id);
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string'
+        ]);
+
+        $data = $request->all();
+        $data['slug'] = \Illuminate\Support\Str::slug($request->name);
+        
+        $category->update($data);
+        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully.');
     }
 
     /**
@@ -59,6 +81,8 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $category = \App\Models\Category::findOrFail($id);
+        $category->delete();
+        return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully.');
     }
 }
