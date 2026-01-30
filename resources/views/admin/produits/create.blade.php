@@ -44,14 +44,15 @@
 
         <p>
             <label for="categorie_id">Catégorie *</label><br>
-            <select id="categorie_id" name="categorie_id" required>
-                <option value="">Sélectionner une catégorie</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}" {{ old('categorie_id') == $category->id ? 'selected' : '' }}>
-                        {{ $category->name }}
-                    </option>
-                @endforeach
-            </select>
+           <select id="categorie_id" name="categorie_id" required>
+    <option value="">Sélectionner une catégorie</option>
+    @foreach($categories as $category)
+        <option value="{{ $category->id }}">
+            {{ $category->name }}
+        </option>
+    @endforeach
+</select>
+
             @if($errors->has('categorie_id'))
                 <br><span style="color: red;">{{ $errors->first('categorie_id') }}</span>
             @endif

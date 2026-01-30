@@ -33,7 +33,7 @@
                         @if($produit->image)
                             <img src="/images/produits/{{ $produit->image }}" alt="{{ $produit->name }}" width="50" height="50">
                         @else
-                            <div style="width: 50px; height: 50px; background: #f0f0f0;">No img</div>
+                            <div style="width: 50px; height: 50px; border: 1px solid #ccc;">No img</div>
                         @endif
                     </td>
                     <td>{{ $produit->name }}</td>
